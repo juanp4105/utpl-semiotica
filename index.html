@@ -103,7 +103,8 @@ h1{
   font-family:'JetBrains Mono', monospace; font-size:.75rem; color:var(--muted);
   background:var(--accent-soft); border-radius:999px; padding:4px 11px; white-space:nowrap;
 }
-.visitas img{display:block; height:20px; width:auto}
+.visitas svg{width:13px; height:13px; flex:none}
+.visitas b{color:var(--fg); font-weight:600}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -115,8 +116,9 @@ h1{
     <span class="eyebrow">Prof. Juan Pablo Arrobo Agila, Ph.D.</span>
     <h1>Semiótica — Índice del curso</h1>
     <p class="sub">Dieciséis semanas de calendario en dos bimestres: catorce lecciones narradas, una diapositiva a la vez, y una semana de repaso general al cierre de cada bimestre (semanas 8 y 16, sin diapositivas). Cada lección se agrega aquí al terminar su construcción.</p>
-    <span class="visitas">
-      <img src="https://visitor-badge.laobi.icu/badge?page_id=juanp4105.utpl-semiotica" alt="contador de visitas">
+    <span class="visitas" id="contador-visitas-caja" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      <b id="contador-visitas">—</b> visitas
     </span>
   </header>
 
@@ -182,6 +184,28 @@ h1{
       '<p class="detalle">Se activa cuando se comparta el PowerPoint de esta semana.</p>' +
       '</article>';
   }).join('');
+})();
+
+// Contador de visitas: cuenta cada carga de la página (cualquier persona,
+// sin necesidad de iniciar sesión) usando un servicio externo gratuito que
+// entrega el total en JSON. El contador real de ese servicio arranca en 0;
+// se le suma un desplazamiento fijo (149) para que la primera visita ya
+// contabilizada muestre 150, como se pidió. Si el servicio no responde, la
+// cajita simplemente se queda oculta, sin romper el resto de la página.
+(function () {
+  var DESPLAZAMIENTO = 149;
+  var caja = document.getElementById('contador-visitas-caja');
+  var numero = document.getElementById('contador-visitas');
+  if (!caja || !numero || !window.fetch) return;
+
+  fetch('https://abacus.jasoncameron.dev/hit/utpl-semiotica-juanp4105/visitas')
+    .then(function (r) { return r.json(); })
+    .then(function (datos) {
+      if (!datos || typeof datos.value !== 'number') return;
+      numero.textContent = (datos.value + DESPLAZAMIENTO).toLocaleString('es-EC');
+      caja.hidden = false;
+    })
+    .catch(function () { /* servicio no disponible: la cajita queda oculta */ });
 })();
 </script>
 </body>
