@@ -148,9 +148,12 @@ h1{
       url: 'https://claude.ai/artifact/3pmazWotm3bAAKrmogWj2E' },
     { n: 2, titulo: 'El signo lingüístico', estado: 'lista',
       detalle: '14 diapositivas · ≈ 7 min de narración · 3 comprobaciones.',
-      url: 'https://claude.ai/artifact/6hTwmnkMvRCTw8imkvkRiS' }
+      url: 'https://claude.ai/artifact/6hTwmnkMvRCTw8imkvkRiS' },
+    { n: 3, titulo: 'El signo lingüístico y las formas del lenguaje', estado: 'lista',
+      detalle: '17 diapositivas · ≈ 7 min de narración · 3 comprobaciones.',
+      url: 'https://claude.ai/artifact/9S2TGCPxFhpB6ngo7UttaT' }
   ];
-  for (var i = 3; i <= 16; i++) {
+  for (var i = 4; i <= 16; i++) {
     if (i === 8) semanas.push({ n: i, estado: 'repaso', titulo: 'Repaso general · primer bimestre', detalle: 'Sin diapositivas: repaso general de las semanas 1 a 7.' });
     else if (i === 16) semanas.push({ n: i, estado: 'repaso', titulo: 'Repaso general · segundo bimestre', detalle: 'Sin diapositivas: repaso general de las semanas 9 a 15.' });
     else semanas.push({ n: i, estado: 'pendiente' });
@@ -211,6 +214,5 @@ h1{
     .catch(function () { /* servicio no disponible: la cajita queda oculta */ });
 })();
 </script>
-<script data-goatcounter="https://juanp4105.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
