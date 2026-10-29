@@ -129,6 +129,39 @@ h1{
   .riel{display:none}
   .pagina{grid-template-columns:1fr; max-width:960px}
 }
+
+/* Puerta de acceso con código individual */
+.puerta{
+  position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(3px); padding:20px;
+}
+.puerta[hidden]{display:none}
+.puerta-caja{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px;
+  max-width:380px; width:100%; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+.puerta-caja h2{font-family:'Fraunces', Georgia, serif; font-size:1.2rem; margin:0}
+.puerta-caja p{color:var(--muted); font-size:.88rem; margin:0; line-height:1.5}
+.puerta-caja input{
+  font-family:'JetBrains Mono', monospace; font-size:1rem; letter-spacing:.04em; text-transform:uppercase;
+  padding:10px 12px; border-radius:8px; border:1.5px solid var(--line); background:var(--bg); color:var(--fg);
+}
+.puerta-caja input:focus{outline:2px solid var(--accent); outline-offset:1px}
+.puerta-caja button{
+  font-family:'Work Sans', sans-serif; font-weight:600; font-size:.92rem; padding:10px 14px; border-radius:8px;
+  border:none; background:var(--accent); color:#fff; cursor:pointer;
+}
+.puerta-caja button:hover{opacity:.92}
+.puerta-error{color:#b5493f; font-size:.82rem; margin:0; min-height:1.2em}
+
+/* Barra de progreso colectivo por semana, dentro de cada tarjeta */
+.prog-mini{display:flex; align-items:center; gap:8px; margin-top:2px}
+.prog-mini[hidden]{display:none}
+.prog-mini .pista{flex:1; height:5px; border-radius:999px; background:var(--line); overflow:hidden}
+.prog-mini .lleno{height:100%; background:var(--rev); border-radius:999px; transition:width .4s ease}
+.prog-mini .pct{
+  font-family:'JetBrains Mono', monospace; font-size:.68rem; color:var(--muted); white-space:nowrap;
+}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -137,6 +170,15 @@ h1{
         async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
+<div class="puerta" id="puerta" hidden>
+  <div class="puerta-caja">
+    <h2>Ingresa con tu código</h2>
+    <p>Escribe el código individual que te compartió el profesor para entrar al repositorio de la clase.</p>
+    <input id="puerta-input" type="text" inputmode="text" autocomplete="off" placeholder="SEM-XXXXX" maxlength="12">
+    <button id="puerta-boton" type="button">Ingresar</button>
+    <p class="puerta-error" id="puerta-error"></p>
+  </div>
+</div>
 <div class="pagina">
   <aside class="riel riel-izq" aria-hidden="true">
     <div class="nodo" style="--c:var(--ok); --r:-6deg">
@@ -241,7 +283,11 @@ h1{
         '<div class="fila-top"><span class="num">' + numTxt + '</span><span class="chip lista">Lista</span></div>' +
         '<h2 class="titulo-semana">' + s.titulo + '</h2>' +
         '<p class="detalle">' + s.detalle + '</p>' +
-        '<a class="accion" href="' + s.url + '" target="_blank" rel="noopener">Abrir la lección ' + icono + '</a>' +
+        '<div class="prog-mini" id="prog-semana-' + s.n + '" hidden>' +
+          '<div class="pista"><div class="lleno" style="width:0%"></div></div>' +
+          '<span class="pct">0%</span>' +
+        '</div>' +
+        '<a class="accion" href="' + s.url + '" target="_blank" rel="noopener" data-semana="semana-' + s.n + '" onclick="window.registrarClic && window.registrarClic(this.dataset.semana)">Abrir la lección ' + icono + '</a>' +
         '</article>';
     }
     if (s.estado === 'repaso') {
@@ -257,6 +303,98 @@ h1{
       '<p class="detalle">Se activa cuando se comparta el PowerPoint de esta semana.</p>' +
       '</article>';
   }).join('');
+})();
+
+// Puerta de acceso con código individual + registro de clics + progreso
+// colectivo anónimo por semana. Todo pasa por un Google Apps Script propio
+// del profesor (ver AppsScript_Codigo.gs); si la URL no está configurada
+// todavía, esta sección no hace nada y la página funciona con acceso libre
+// como antes.
+(function () {
+  'use strict';
+
+  // ⚠️ Reemplazar por la URL de implementación del Apps Script (paso 5 de la guía).
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfqMdGXKhq-VWS8vNISHiyhPz9dbo0LIwZIUoj8bqlcJ6vGi4MWhbNBGAjMiqwOOoX/exec';
+
+  var activo = APPS_SCRIPT_URL.indexOf('https://') === 0;
+  var CLAVE = 'semiotica_codigo';
+
+  function codigoValido(c) {
+    return /^SEM-[A-Z2-9]{5}$/.test((c || '').trim().toUpperCase());
+  }
+
+  function obtenerCodigo() {
+    try { return localStorage.getItem(CLAVE); } catch (e) { return null; }
+  }
+  function guardarCodigo(c) {
+    try { localStorage.setItem(CLAVE, c); } catch (e) {}
+  }
+
+  function registrarVisita(codigo, pagina) {
+    if (!activo || !codigo || !pagina) return;
+    var img = new Image();
+    img.src = APPS_SCRIPT_URL + '?accion=log&codigo=' + encodeURIComponent(codigo) +
+      '&pagina=' + encodeURIComponent(pagina) + '&t=' + Date.now();
+  }
+
+  window.registrarClic = function (pagina) {
+    registrarVisita(obtenerCodigo(), pagina);
+  };
+
+  function cargarEstadisticas() {
+    if (!activo) return;
+    var cb = 'statsCb' + Date.now();
+    window[cb] = function (datos) {
+      delete window[cb];
+      if (!datos || !datos.paginas) return;
+      Object.keys(datos.paginas).forEach(function (pagina) {
+        var caja = document.getElementById('prog-' + pagina);
+        if (!caja) return;
+        var info = datos.paginas[pagina];
+        caja.hidden = false;
+        caja.querySelector('.lleno').style.width = info.porcentaje + '%';
+        caja.querySelector('.pct').textContent = info.porcentaje + '% de la clase ya la revisó';
+      });
+    };
+    var s = document.createElement('script');
+    s.src = APPS_SCRIPT_URL + '?accion=stats&callback=' + cb;
+    s.onerror = function () { delete window[cb]; };
+    document.body.appendChild(s);
+  }
+
+  function mostrarPuerta() {
+    var puerta = document.getElementById('puerta');
+    var input = document.getElementById('puerta-input');
+    var boton = document.getElementById('puerta-boton');
+    var error = document.getElementById('puerta-error');
+    puerta.hidden = false;
+    input.focus();
+
+    function intentar() {
+      var val = input.value.trim().toUpperCase();
+      if (!codigoValido(val)) {
+        error.textContent = 'Revisa el código; el formato es SEM-XXXXX.';
+        return;
+      }
+      guardarCodigo(val);
+      error.textContent = '';
+      puerta.hidden = true;
+      registrarVisita(val, 'indice');
+      cargarEstadisticas();
+    }
+    boton.addEventListener('click', intentar);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') intentar(); });
+  }
+
+  if (!activo) return; // acceso libre mientras no se configure el Apps Script
+
+  var existente = obtenerCodigo();
+  if (existente && codigoValido(existente)) {
+    registrarVisita(existente, 'indice');
+    cargarEstadisticas();
+  } else {
+    mostrarPuerta();
+  }
 })();
 
 // Contador de visitas: cuenta cada carga de la página (cualquier persona,
