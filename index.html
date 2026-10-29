@@ -105,6 +105,30 @@ h1{
 }
 .visitas svg{width:13px; height:13px; flex:none}
 .visitas b{color:var(--fg); font-weight:600}
+
+/* Rieles laterales: figuras de la semiótica (Peirce, Saussure, Jakobson, Ogden-Richards)
+   a modo de "cadena de transmisión" decorativa, que ocupa el espacio vacío de los costados
+   en pantallas anchas. Se ocultan por completo en pantallas angostas. */
+.pagina{max-width:1360px; margin:0 auto; display:grid; grid-template-columns:minmax(64px,1fr) minmax(auto,960px) minmax(64px,1fr); column-gap:6px; align-items:stretch}
+.riel{position:relative; display:flex; flex-direction:column; justify-content:space-evenly; align-items:center; padding-block:28px}
+.riel::before{content:""; position:absolute; top:10px; bottom:10px; left:50%; border-left:2px dashed var(--line); transform:translateX(-50%)}
+.nodo{--r:0deg; --c:var(--accent); position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:7px}
+.sello{
+  width:58px; height:58px; border-radius:50%; background:var(--surface);
+  border:1.5px solid color-mix(in srgb, var(--c) 42%, var(--line));
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.06); transform:rotate(var(--r)); color:var(--c);
+}
+.sello svg{width:25px; height:25px}
+.nodo .etq{
+  font-family:'JetBrains Mono', monospace; font-size:.6rem; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--muted); text-align:center; max-width:82px; line-height:1.35;
+}
+.nodo .etq b{color:var(--fg); display:block; font-size:.64rem; letter-spacing:.07em}
+@media (max-width:1180px){
+  .riel{display:none}
+  .pagina{grid-template-columns:1fr; max-width:960px}
+}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -113,7 +137,27 @@ h1{
         async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
-<div class="envoltura">
+<div class="pagina">
+  <aside class="riel riel-izq" aria-hidden="true">
+    <div class="nodo" style="--c:var(--ok); --r:-6deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
+      <span class="etq"><b>Ícono</b>semejanza</span>
+    </div>
+    <div class="nodo" style="--c:var(--pend); --r:5deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c-1.6 3-5 4.8-5 9a5 5 0 0 0 10 0c0-1.3-.4-2.3-1.1-3.2.3 1.8-.5 2.9-1.6 2.9-1.2 0-1.7-1.1-1.1-2.7.4-1.1 1-2.1-.1-4.5-.4-.6-.7-1-1.1-1.5Z"/></svg></span>
+      <span class="etq"><b>Índice</b>causalidad</span>
+    </div>
+    <div class="nodo" style="--c:var(--rev); --r:-4deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="8,2.5 16,2.5 21.5,8 21.5,16 16,21.5 8,21.5 2.5,16 2.5,8"/></svg></span>
+      <span class="etq"><b>Símbolo</b>convención</span>
+    </div>
+    <div class="nodo" style="--c:var(--accent); --r:6deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 19 3 19Z"/><circle cx="12" cy="3" r="1.4" fill="currentColor"/><circle cx="21" cy="19" r="1.4" fill="currentColor"/><circle cx="3" cy="19" r="1.4" fill="currentColor"/></svg></span>
+      <span class="etq"><b>Triángulo</b>del significado</span>
+    </div>
+  </aside>
+
+  <div class="envoltura">
   <header class="cabecera">
     <div class="marca"><img src="data:image/png;base64,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" alt="Universidad Técnica Particular de Loja"></div>
     <span class="eyebrow">Prof. Juan Pablo Arrobo Agila, Ph.D.</span>
@@ -137,6 +181,26 @@ h1{
     <p><b>Cómo se agrega una semana:</b> se comparte el PowerPoint de esa semana, se redacta y aprueba el guion de narración, se genera el audio con la voz Brian C, se construyen los subtítulos y se reconstruye el paquete. El resultado son dos entregas por semana: esta vista para repasarla en el navegador, y un paquete SCORM para subir al EVA.</p>
     <p><b>Semanas 8 y 16:</b> repaso general del bimestre correspondiente, sin diapositivas ni paquete SCORM propio.</p>
   </footer>
+  </div>
+
+  <aside class="riel riel-der" aria-hidden="true">
+    <div class="nodo" style="--c:var(--accent); --r:5deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span>
+      <span class="etq"><b>Significante</b>significado</span>
+    </div>
+    <div class="nodo" style="--c:var(--ok); --r:-5deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 9 9 0 0 1-3.6-.7L4 21l1.3-4.3A8.4 8.4 0 1 1 21 11.5Z"/></svg></span>
+      <span class="etq"><b>Emisor</b>receptor</span>
+    </div>
+    <div class="nodo" style="--c:var(--rev); --r:4deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+      <span class="etq"><b>Interpretante</b>sentido</span>
+    </div>
+    <div class="nodo" style="--c:var(--pend); --r:-6deg">
+      <span class="sello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2V5Z"/><path d="M20 5a2 2 0 0 0-2-2h-5v18h5a2 2 0 0 0 2-2V5Z"/></svg></span>
+      <span class="etq"><b>Lengua</b>sistema</span>
+    </div>
+  </aside>
 </div>
 
 <script>
