@@ -70,6 +70,7 @@ h1{
 }
 .tarjeta.lista{border-color:color-mix(in srgb, var(--ok) 35%, var(--line))}
 .tarjeta.repaso{border-color:color-mix(in srgb, var(--rev) 35%, var(--line)); border-style:dashed}
+.tarjeta.recurso{border-color:color-mix(in srgb, var(--rev) 35%, var(--line))}
 .fila-top{display:flex; align-items:center; justify-content:space-between; gap:8px}
 .num{
   font-family:'JetBrains Mono', monospace; font-size:.8rem; color:var(--muted); letter-spacing:.04em;
@@ -81,6 +82,7 @@ h1{
 .chip.lista{background:var(--ok-soft); color:var(--ok)}
 .chip.pendiente{background:var(--pend-soft); color:var(--pend)}
 .chip.repaso{background:var(--rev-soft); color:var(--rev)}
+.chip.recurso{background:var(--rev-soft); color:var(--rev)}
 
 .titulo-semana{font-family:'Fraunces', Georgia, serif; font-size:1.08rem; font-weight:600; margin:0; text-wrap:balance}
 .titulo-semana.vacio{color:var(--muted); font-weight:500; font-style:italic}
@@ -260,15 +262,18 @@ h1{
       url: 'https://claude.ai/artifact/9S2TGCPxFhpB6ngo7UttaT' },
     { n: 4, titulo: 'Naturaleza, estructura y tipos de signo', estado: 'lista',
       detalle: '15 diapositivas · ≈ 5 min de narración · 3 comprobaciones.',
-      url: 'https://claude.ai/artifact/AVvMMAKQuGjSpgxoLQB1gA' }
+      url: 'https://claude.ai/artifact/AVvMMAKQuGjSpgxoLQB1gA' },
+    { n: 5, titulo: '¿La gramática de los emojis?', estado: 'recurso',
+      detalle: 'Recurso visual de apoyo: resumen del artículo de Cohn, Engelen y Schilperoord (2019) trabajado en la videocolaboración de esta semana.',
+      url: 'https://claude.ai/artifact/Vv8ZpzC3sDbs1jeMx3oS98' }
   ];
-  for (var i = 5; i <= 16; i++) {
+  for (var i = 6; i <= 16; i++) {
     if (i === 8) semanas.push({ n: i, estado: 'repaso', titulo: 'Repaso general · primer bimestre', detalle: 'Sin diapositivas: repaso general de las semanas 1 a 7.' });
     else if (i === 16) semanas.push({ n: i, estado: 'repaso', titulo: 'Repaso general · segundo bimestre', detalle: 'Sin diapositivas: repaso general de las semanas 9 a 15.' });
     else semanas.push({ n: i, estado: 'pendiente' });
   }
 
-  var lecciones = semanas.filter(function (s) { return s.estado !== 'repaso'; });
+  var lecciones = semanas.filter(function (s) { return s.estado !== 'repaso' && s.estado !== 'recurso'; });
   var listas = lecciones.filter(function (s) { return s.estado === 'lista'; }).length;
 
   document.getElementById('avance-texto').textContent = listas + ' / ' + lecciones.length;
@@ -288,6 +293,18 @@ h1{
           '<span class="pct">0%</span>' +
         '</div>' +
         '<a class="accion" href="' + s.url + '" target="_blank" rel="noopener" data-semana="semana-' + s.n + '" onclick="window.registrarClic && window.registrarClic(this.dataset.semana)">Abrir la lección ' + icono + '</a>' +
+        '</article>';
+    }
+    if (s.estado === 'recurso') {
+      return '<article class="tarjeta recurso">' +
+        '<div class="fila-top"><span class="num">' + numTxt + '</span><span class="chip recurso">Recurso</span></div>' +
+        '<h2 class="titulo-semana">' + s.titulo + '</h2>' +
+        '<p class="detalle">' + s.detalle + '</p>' +
+        '<div class="prog-mini" id="prog-semana-' + s.n + '" hidden>' +
+          '<div class="pista"><div class="lleno" style="width:0%"></div></div>' +
+          '<span class="pct">0%</span>' +
+        '</div>' +
+        '<a class="accion" href="' + s.url + '" target="_blank" rel="noopener" data-semana="semana-' + s.n + '" onclick="window.registrarClic && window.registrarClic(this.dataset.semana)">Ver el recurso ' + icono + '</a>' +
         '</article>';
     }
     if (s.estado === 'repaso') {
@@ -314,7 +331,7 @@ h1{
   'use strict';
 
   // ⚠️ Reemplazar por la URL de implementación del Apps Script (paso 5 de la guía).
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfqMdGXKhq-VWS8vNISHiyhPz9dbo0LIwZIUoj8bqlcJ6vGi4MWhbNBGAjMiqwOOoX/exec';
+  var APPS_SCRIPT_URL = 'PENDIENTE_URL_APPS_SCRIPT';
 
   var activo = APPS_SCRIPT_URL.indexOf('https://') === 0;
   var CLAVE = 'semiotica_codigo';
