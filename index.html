@@ -222,8 +222,8 @@ h1{
   <main class="rejilla" id="rejilla"></main>
 
   <footer class="nota-pie">
-    <p><b>Cómo se agrega una semana:</b> se comparte el PowerPoint de esa semana, se redacta y aprueba el guion de narración, se genera el audio con la voz Brian C, se construyen los subtítulos y se reconstruye el paquete. El resultado son dos entregas por semana: esta vista para repasarla en el navegador, y un paquete SCORM para subir al EVA.</p>
-    <p><b>Semanas 8 y 16:</b> repaso general del bimestre correspondiente, sin diapositivas ni paquete SCORM propio.</p>
+    <p><b>Cómo se agrega una semana:</b> se comparte el PowerPoint de esa semana, se redacta y aprueba el guion de narración, se genera el audio con la voz Brian C, se construyen los subtítulos y se reconstruye el paquete. El resultado es esta vista para repasarla en el navegador.</p>
+    <p><b>Semanas 8 y 16:</b> repaso general del bimestre correspondiente, sin diapositivas propias.</p>
   </footer>
   </div>
 
@@ -265,9 +265,12 @@ h1{
       url: 'https://claude.ai/artifact/AVvMMAKQuGjSpgxoLQB1gA' },
     { n: 5, titulo: '¿La gramática de los emojis?', estado: 'recurso',
       detalle: 'Recurso visual de apoyo: resumen del artículo de Cohn, Engelen y Schilperoord (2019) trabajado en la videocolaboración de esta semana.',
-      url: 'https://claude.ai/artifact/Vv8ZpzC3sDbs1jeMx3oS98' }
+      url: 'https://claude.ai/artifact/Vv8ZpzC3sDbs1jeMx3oS98' },
+    { n: 6, titulo: 'La Anatomía del Sentido: el signo según Saussure', estado: 'lista',
+      detalle: '15 diapositivas · ≈ 8.8 min de narración · 3 comprobaciones.',
+      url: 'https://claude.ai/artifact/2CzBE67iH6SnPF2TdNMZGc' }
   ];
-  for (var i = 6; i <= 16; i++) {
+  for (var i = 7; i <= 16; i++) {
     if (i === 8) semanas.push({ n: i, estado: 'repaso', titulo: 'Repaso general · primer bimestre', detalle: 'Sin diapositivas: repaso general de las semanas 1 a 7.' });
     else if (i === 16) semanas.push({ n: i, estado: 'repaso', titulo: 'Repaso general · segundo bimestre', detalle: 'Sin diapositivas: repaso general de las semanas 9 a 15.' });
     else semanas.push({ n: i, estado: 'pendiente' });
